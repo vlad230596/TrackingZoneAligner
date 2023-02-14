@@ -22,7 +22,14 @@ class Colors(Enum):
 def readJson(filename):
     f = open(filename)
     data = json.load(f)
+    f.close()
     return data
+
+def writeJson(filename, obj):
+    f = open(filename, "w")
+    f.write(json.dumps(obj, indent=4))
+    f.close()
+    pass
 
 def getMovedPoint(point, width, height):
     result = ScreenPoint(point['x'] + width / 2, height / 2 - point['z'])
@@ -46,7 +53,7 @@ def warpTargetRegion(src, dst, roiPoints):
 
     #M = cv2.getPerspectiveTransform(pts1, pts2)
     h, status = cv2.findHomography(pts1, pts2)
-    result = cv2.warpPerspective(dst, h, (src.shape[0], src.shape[1]), cv2.INTER_CUBIC)
+    result = cv2.warpPerspective(dst, h, (srcWidth, srcHeight), cv2.INTER_CUBIC)
 
     return result
 
@@ -60,12 +67,20 @@ def onLeftClick(y,x):
 
 
 if __name__ == '__main__':
-    description = readJson('data/vega/ZoneDescriptionFixed.json')
-    print(f'loaded {len(description["Markers"])} markers')
-    realFoto = cv2.imread('data/vega/full.jfif')
+    outputFilename = 'data/ssfilmz/blended.png'
+    roiFilename = 'data/ssfilmz/Roi.json'
 
-    roi = readJson('data/vega/Roi.json')
+    description = readJson('data/ssfilmz/ZoneDescription.json')
+    print(f'loaded {len(description["Markers"])} markers')
+    realFoto = cv2.imread('data/ssfilmz/full.jpg')
+
+    roi = readJson(roiFilename)
     roiPoints = roi['Points']
+    boarderSize = 0
+    if(roi['BoarderSize']):
+        boarderSize = roi['BoarderSize']
+    realFoto = cv2.copyMakeBorder(realFoto, boarderSize, boarderSize, boarderSize, boarderSize, cv2.BORDER_CONSTANT, value=Colors.BLACK.value)
+
 
     baseScale = 2
     scale = baseScale * 100
@@ -108,7 +123,7 @@ if __name__ == '__main__':
     while True:
         view = realFoto.copy()
         for p in roiPoints:
-            cv2.circle(view, p, 20, Colors.RED.value, 5)
+            cv2.circle(view, tuple(p), 20, Colors.RED.value, 5)
         window.replaceImage(view)
 
         warped = warpTargetRegion(blank_image, realFoto, roiPoints)
@@ -118,7 +133,8 @@ if __name__ == '__main__':
         c = cv2.waitKey(0)
         selectedIndex = -1
 
-
+        if (c == 27):
+            break
 
         if(c == ord('0')):
             selectedIndex = 0
@@ -141,7 +157,14 @@ if __name__ == '__main__':
             if (blendK < 0.0):
                 blendK = 0.0
 
+        if (c == ord('s') or c == ord('S')):
+            print(f'save file to {outputFilename}')
+            cv2.imwrite(outputFilename, blended)
 
+        if (c == ord('p') or c == ord('P')):
+            print(f'save points to {roiFilename}')
+            roi['Points'] = roiPoints
+            writeJson(f'{roiFilename}', roi)
 
     # dummy = np.zeros((realFoto.height, realFoto.width, 3), np.uint8)
     # dummy[:] = Colors.BLACK.value

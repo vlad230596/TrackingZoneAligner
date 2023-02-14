@@ -41,12 +41,12 @@ public struct ZoneDescription {
 class Program {
 
     static int Main(string[] args) {
-        if (args.Count() < 2) {
+        if (args.Count() < 1) {
             Console.WriteLine($"Specify tracking zone url in argv[1]");
             return -1;
         }
 
-        var link = args[1];
+        var link = args[0];
         string environmentCode = link;
 
         string prefix = "?data=";
