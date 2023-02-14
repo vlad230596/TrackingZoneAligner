@@ -128,3 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /ZoneConvertor/Properties/launchSettings.json
+/data/
+/data.zip
