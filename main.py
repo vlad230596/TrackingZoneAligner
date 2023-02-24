@@ -1,11 +1,13 @@
 import json
 import cv2
 import numpy as np
+import glob
 
-from enum import Enum
 from dataclasses import dataclass
 
-from zoom import PanZoomWindow
+#from Eni.Py.zoom import PanZoomWindow
+from EniPy import zoom
+from EniPy import colors
 
 
 @dataclass
@@ -13,11 +15,7 @@ class ScreenPoint:
     x: float
     y: float
 
-class Colors(Enum):
-    RED = (0, 0, 255)
-    BLUE = (255, 0, 0)
-    GREEN = (0, 255, 0)
-    BLACK = (0, 0, 0)
+
 
 def readJson(filename):
     f = open(filename)
@@ -38,20 +36,13 @@ def getMovedPoint(point, width, height):
 def toPixelCoordinate(value, scale):
     return int(value * scale)
 
-#def warpTargetRegion(src, dst, lb, lt, rt, rb):
 def warpTargetRegion(src, dst, roiPoints):
     srcWidth = src.shape[1]
     srcHeight = src.shape[0]
 
-    #pts1 = np.float32([lb, lt, rb, rt])
-    #pts1 = np.float32([lt, rt, lb, rb])
-    #pts2 = np.float32([[0, 0], [srcWidth, 0], [0, srcHeight], [srcWidth, srcHeight]])
-
     pts1 = np.float32(roiPoints)
-    pts2 = np.float32([[0, srcHeight],[0, 0], [srcWidth, 0], [srcWidth, srcHeight]])
+    pts2 = np.float32([[0, srcHeight], [0, 0], [srcWidth, 0], [srcWidth, srcHeight]])
 
-
-    #M = cv2.getPerspectiveTransform(pts1, pts2)
     h, status = cv2.findHomography(pts1, pts2)
     result = cv2.warpPerspective(dst, h, (srcWidth, srcHeight), cv2.INTER_CUBIC)
 
@@ -59,27 +50,33 @@ def warpTargetRegion(src, dst, roiPoints):
 
 
 mousePoint = ()
+newClick = False
 
 def onLeftClick(y,x):
     global mousePoint
+    global newClick
     mousePoint = (x, y)
+    newClick = True
     print(f'p ({x}, {y})')
 
 
 if __name__ == '__main__':
-    outputFilename = 'data/ssfilmz/blended.png'
-    roiFilename = 'data/ssfilmz/Roi.json'
 
-    description = readJson('data/ssfilmz/ZoneDescription.json')
+    caseName = 'vega'
+
+    outputFilename = f'data/{caseName}/blended.png'
+    roiFilename = f'data/{caseName}/Roi.json'
+
+    description = readJson(f'data/{caseName}/ZoneDescription.json')
     print(f'loaded {len(description["Markers"])} markers')
-    realFoto = cv2.imread('data/ssfilmz/full.jpg')
+    realFoto = cv2.imread(glob.glob(f'data/{caseName}/full.*')[0])
 
     roi = readJson(roiFilename)
     roiPoints = roi['Points']
     boarderSize = 0
-    if(roi['BoarderSize']):
+    if "BoarderSize" in roi:
         boarderSize = roi['BoarderSize']
-    realFoto = cv2.copyMakeBorder(realFoto, boarderSize, boarderSize, boarderSize, boarderSize, cv2.BORDER_CONSTANT, value=Colors.BLACK.value)
+    realFoto = cv2.copyMakeBorder(realFoto, boarderSize, boarderSize, boarderSize, boarderSize, cv2.BORDER_CONSTANT, value=colors.Black)
 
 
     baseScale = 2
@@ -98,40 +95,37 @@ if __name__ == '__main__':
     for marker in description["Markers"]:
         point = getMovedPoint(marker, width, height)
         center = (toPixelCoordinate(point.x, scale), toPixelCoordinate(point.y, scale))
-        cv2.circle(blank_image, center, int(baseScale * 2), Colors.RED.value, int(baseScale / 2))
+        cv2.circle(blank_image, center, int(baseScale * 2), colors.Red, int(baseScale / 2))
 
     for lineX in np.arange(cellSize, width, cellSize):
-        cv2.line(blank_image, (toPixelCoordinate(lineX, scale), 0), (toPixelCoordinate(lineX, scale), screenHeight), Colors.RED.value, 1)
+        cv2.line(blank_image, (toPixelCoordinate(lineX, scale), 0), (toPixelCoordinate(lineX, scale), screenHeight), colors.Red, 1)
 
     for lineY in np.arange(cellSize, height, cellSize):
-        cv2.line(blank_image, (0, toPixelCoordinate(lineY, scale)), (screenWidth, toPixelCoordinate(lineY, scale)), Colors.RED.value, 1)
+        cv2.line(blank_image, (0, toPixelCoordinate(lineY, scale)), (screenWidth, toPixelCoordinate(lineY, scale)), colors.Red, 1)
 
     cv2.imshow('test', blank_image)
 
-
     view = realFoto.copy()
-    window = PanZoomWindow(img=view, windowName="RR", onLeftClickFunction=onLeftClick)
-
+    window = zoom.PanZoomWindow(img=view, windowName="RR", onLeftClickFunction=onLeftClick)
 
     dummy = realFoto.copy()
-    dummy[:] = Colors.BLACK.value
-
-
-
+    dummy[:] = colors.Black
 
     blendK = 0.5
+    selectedIndex = -1
+
     while True:
         view = realFoto.copy()
         for p in roiPoints:
-            cv2.circle(view, tuple(p), 20, Colors.RED.value, 5)
+            cv2.circle(view, tuple(p), 20, colors.Red, 15)
+        cv2.putText(view, f'{selectedIndex}', (0, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, colors.Red, 4)
         window.replaceImage(view)
 
         warped = warpTargetRegion(blank_image, realFoto, roiPoints)
         blended = cv2.addWeighted(warped, 0.8, blank_image, blendK, 0)
         cv2.imshow('blended', blended)
 
-        c = cv2.waitKey(0)
-        selectedIndex = -1
+        c = cv2.waitKeyEx(1)
 
         if (c == 27):
             break
@@ -144,8 +138,36 @@ if __name__ == '__main__':
             selectedIndex = 2
         if (c == ord('3')):
             selectedIndex = 3
-        if(selectedIndex != -1):
-            roiPoints[selectedIndex] = mousePoint
+
+        if (selectedIndex != -1):
+            targetPoint = roiPoints[selectedIndex]
+
+        if(c == 0x10000 * 0x25):
+            print('L')
+            if (targetPoint):
+                targetPoint[0] = targetPoint[0] - 1
+
+        if (c == 0x10000 * 0x27):
+            print('R')
+            if (targetPoint):
+                targetPoint[0] = targetPoint[0] + 1
+
+        if (c == 0x10000 * 0x26):
+            print('U')
+            if (targetPoint):
+                targetPoint[1] = targetPoint[1] - 1
+
+        if (c == 0x10000 * 0x28):
+            print('D')
+            if (targetPoint):
+                targetPoint[1] = targetPoint[1] + 1
+
+
+        if(newClick):
+            print('New click detected')
+            if(selectedIndex != -1):
+                roiPoints[selectedIndex] = mousePoint
+            newClick = False
 
         if(c == ord('+')):
             blendK += 0.2
@@ -166,12 +188,4 @@ if __name__ == '__main__':
             roi['Points'] = roiPoints
             writeJson(f'{roiFilename}', roi)
 
-    # dummy = np.zeros((realFoto.height, realFoto.width, 3), np.uint8)
-    # dummy[:] = Colors.BLACK.value
-
-
-
-
-
     cv2.destroyAllWindows()
-
