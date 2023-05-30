@@ -57,6 +57,8 @@ class Program {
             if(link.Contains(suffix)) {
                 environmentCode = environmentCode.Remove(environmentCode.IndexOf(suffix));
             }
+        } else {
+            environmentCode = link;
         }
         Console.WriteLine($"Used environmentCode: {environmentCode}");
         using var environmentSelectorLibrary = Antilatency.Alt.Environment.Selector.Library.load();

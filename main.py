@@ -8,26 +8,13 @@ from dataclasses import dataclass
 #from Eni.Py.zoom import PanZoomWindow
 from EniPy import zoom
 from EniPy import colors
+from EniPy import eniUtils
 
 
 @dataclass
 class ScreenPoint:
     x: float
     y: float
-
-
-
-def readJson(filename):
-    f = open(filename)
-    data = json.load(f)
-    f.close()
-    return data
-
-def writeJson(filename, obj):
-    f = open(filename, "w")
-    f.write(json.dumps(obj, indent=4))
-    f.close()
-    pass
 
 def getMovedPoint(point, width, height):
     result = ScreenPoint(point['x'] + width / 2, height / 2 - point['z'])
@@ -62,16 +49,16 @@ def onLeftClick(y,x):
 
 if __name__ == '__main__':
 
-    caseName = 'vega'
+    caseName = 'yaswq7259w'
 
     outputFilename = f'data/{caseName}/blended.png'
     roiFilename = f'data/{caseName}/Roi.json'
 
-    description = readJson(f'data/{caseName}/ZoneDescription.json')
+    description = eniUtils.readJson(f'data/{caseName}/ZoneDescription.json')
     print(f'loaded {len(description["Markers"])} markers')
     realFoto = cv2.imread(glob.glob(f'data/{caseName}/full.*')[0])
 
-    roi = readJson(roiFilename)
+    roi = eniUtils.readJson(roiFilename)
     roiPoints = roi['Points']
     boarderSize = 0
     if "BoarderSize" in roi:
@@ -186,6 +173,6 @@ if __name__ == '__main__':
         if (c == ord('p') or c == ord('P')):
             print(f'save points to {roiFilename}')
             roi['Points'] = roiPoints
-            writeJson(f'{roiFilename}', roi)
+            eniUtils.writeJson(f'{roiFilename}', roi)
 
     cv2.destroyAllWindows()
