@@ -2,6 +2,7 @@ import json
 import cv2
 import numpy as np
 import glob
+import os
 
 from dataclasses import dataclass
 
@@ -11,13 +12,35 @@ from EniPy import colors
 from EniPy import eniUtils
 
 
+from tkinter import *
+from tkinter import ttk
+
+
 @dataclass
 class ScreenPoint:
     x: float
     y: float
 
+def getDirectories(path):
+    result = []
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in dirs:
+            result.append(name)
+    return result
 def getMovedPoint(point, width, height):
-    result = ScreenPoint(point['x'] + width / 2, height / 2 - point['z'])
+    global flipX
+    global flipZ
+
+    signX = 1
+    signZ = -1
+
+    if(flipX.get()):
+        signX = signX * -1
+
+    if(flipZ.get()):
+        signZ = signZ * -1
+
+    result = ScreenPoint((signX * point['x']) + width / 2, height / 2 + (signZ * point['z']))
     return result
 
 def toPixelCoordinate(value, scale):
@@ -38,6 +61,12 @@ def warpTargetRegion(src, dst, roiPoints):
 
 mousePoint = ()
 newClick = False
+selectedCase = ""
+
+flipX = ()
+flipZ = ()
+
+
 
 def onLeftClick(y,x):
     global mousePoint
@@ -46,10 +75,20 @@ def onLeftClick(y,x):
     newClick = True
     print(f'p ({x}, {y})')
 
+def selected(event):
+    global selectedCase
 
-if __name__ == '__main__':
+    selectedCase = combobox.get()
+    print(f'selectedCase: {selectedCase}')
 
-    caseName = 'yaswq7259w'
+
+def onDrawClick():
+    draw(selectedCase)
+
+def draw(caseName):
+    global newClick
+
+
 
     outputFilename = f'data/{caseName}/blended.png'
     roiFilename = f'data/{caseName}/Roi.json'
@@ -63,8 +102,8 @@ if __name__ == '__main__':
     boarderSize = 0
     if "BoarderSize" in roi:
         boarderSize = roi['BoarderSize']
-    realFoto = cv2.copyMakeBorder(realFoto, boarderSize, boarderSize, boarderSize, boarderSize, cv2.BORDER_CONSTANT, value=colors.Black)
-
+    realFoto = cv2.copyMakeBorder(realFoto, boarderSize, boarderSize, boarderSize, boarderSize, cv2.BORDER_CONSTANT,
+                                  value=colors.Black)
 
     baseScale = 2
     scale = baseScale * 100
@@ -76,19 +115,20 @@ if __name__ == '__main__':
     screenWidth = int(width * scale)
     screenHeight = int(height * scale)
 
-
     blank_image = np.zeros((screenHeight, screenWidth, 3), np.uint8)
 
     for marker in description["Markers"]:
         point = getMovedPoint(marker, width, height)
         center = (toPixelCoordinate(point.x, scale), toPixelCoordinate(point.y, scale))
-        cv2.circle(blank_image, center, int(baseScale * 2), colors.Red, int(baseScale / 2))
+        cv2.circle(blank_image, center, int(baseScale * 2), colors.Red, int(baseScale))
 
     for lineX in np.arange(cellSize, width, cellSize):
-        cv2.line(blank_image, (toPixelCoordinate(lineX, scale), 0), (toPixelCoordinate(lineX, scale), screenHeight), colors.Red, 1)
+        cv2.line(blank_image, (toPixelCoordinate(lineX, scale), 0), (toPixelCoordinate(lineX, scale), screenHeight),
+                 colors.Red, 1)
 
     for lineY in np.arange(cellSize, height, cellSize):
-        cv2.line(blank_image, (0, toPixelCoordinate(lineY, scale)), (screenWidth, toPixelCoordinate(lineY, scale)), colors.Red, 1)
+        cv2.line(blank_image, (0, toPixelCoordinate(lineY, scale)), (screenWidth, toPixelCoordinate(lineY, scale)),
+                 colors.Red, 1)
 
     cv2.imshow('test', blank_image)
 
@@ -117,7 +157,7 @@ if __name__ == '__main__':
         if (c == 27):
             break
 
-        if(c == ord('0')):
+        if (c == ord('0')):
             selectedIndex = 0
         if (c == ord('1')):
             selectedIndex = 1
@@ -129,7 +169,7 @@ if __name__ == '__main__':
         if (selectedIndex != -1):
             targetPoint = roiPoints[selectedIndex]
 
-        if(c == 0x10000 * 0x25):
+        if (c == 0x10000 * 0x25):
             print('L')
             if (targetPoint):
                 targetPoint[0] = targetPoint[0] - 1
@@ -149,22 +189,25 @@ if __name__ == '__main__':
             if (targetPoint):
                 targetPoint[1] = targetPoint[1] + 1
 
-
-        if(newClick):
+        if (newClick):
             print('New click detected')
-            if(selectedIndex != -1):
-                roiPoints[selectedIndex] = mousePoint
+            if (selectedIndex != -1):
+                roiPoints[selectedIndex] = list(mousePoint)
             newClick = False
 
-        if(c == ord('+')):
+        if (c == ord('+')):
             blendK += 0.2
-            if(blendK > 1.0):
+            if (blendK > 1.0):
                 blendK = 1.0
 
         if (c == ord('-')):
             blendK -= 0.2
             if (blendK < 0.0):
                 blendK = 0.0
+
+        if (c == ord('r') or c == ord('R')):
+            print(f'rotate')
+            roiPoints[:] = roiPoints[1:] + roiPoints[0:1]
 
         if (c == ord('s') or c == ord('S')):
             print(f'save file to {outputFilename}')
@@ -176,3 +219,34 @@ if __name__ == '__main__':
             eniUtils.writeJson(f'{roiFilename}', roi)
 
     cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+
+
+    root = Tk()
+    root.title("TrackingZoneAligner")
+    root.geometry("480x640")
+
+    flipX = IntVar(value=0)
+    flipZ = IntVar(value=0)
+
+    #root, dirs, files = os.walk("./data/", topdown=False)
+    cases = getDirectories("./data/")
+    label = ttk.Label()
+    label.pack(anchor=NW, fill=X, padx=5, pady=5)
+
+    combobox = ttk.Combobox(values=cases, state="readonly")
+    combobox.pack(anchor=NW, fill=X, padx=5, pady=5)
+    combobox.bind("<<ComboboxSelected>>", selected)
+
+    flipXCheckbutton = ttk.Checkbutton(text="FlipX", variable=flipX)
+    flipXCheckbutton.pack()
+
+    flipZCheckbutton = ttk.Checkbutton(text="FlipZ", variable=flipZ)
+    flipZCheckbutton.pack()
+
+    drawButton = ttk.Button(root, text="Draw", command=onDrawClick)
+    drawButton.pack()
+
+
+    root.mainloop()
