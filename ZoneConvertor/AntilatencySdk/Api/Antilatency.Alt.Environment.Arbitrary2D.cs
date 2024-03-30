@@ -8,6 +8,13 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+//Unity IL2CPP fix
+#if ENABLE_IL2CPP && !__MonoCS__
+	#define __MonoCS__
+#endif
+#if __MonoCS__
+	using AOT;
+#endif
 #pragma warning disable IDE1006 // Do not warn about naming style violations
 #pragma warning disable IDE0017 // Do not suggest to simplify object initialization
 using System.Runtime.InteropServices; //GuidAttribute
@@ -93,44 +100,56 @@ namespace Antilatency.Alt.Environment.Arbitrary2D {
 				AppendVmt(vmtBlocks);
 				NativeVmt = new NativeInterfaceVmt(vmtBlocks);
 			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getMarkersDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getMarkers(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) {
+				try {
+					var obj = GetContext(_this) as IDeserializedEnvironment;
+					var resultMarshaler = obj.getMarkers();
+					result.assign(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getHeightDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getHeight(System.IntPtr _this, out float result) {
+				try {
+					var obj = GetContext(_this) as IDeserializedEnvironment;
+					var resultMarshaler = obj.getHeight();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(float);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getFloorDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getFloor(System.IntPtr _this, out Antilatency.InterfaceContract.Bool result) {
+				try {
+					var obj = GetContext(_this) as IDeserializedEnvironment;
+					var resultMarshaler = obj.getFloor();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(Antilatency.InterfaceContract.Bool);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
 			protected static new void AppendVmt(System.Collections.Generic.List<object> buffer) {
 				Antilatency.InterfaceContract.Details.IInterfaceRemap.AppendVmt(buffer);
 				var vmt = new VMT();
-				vmt.getMarkers = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) => {
-					try {
-						var obj = GetContext(_this) as IDeserializedEnvironment;
-						var resultMarshaler = obj.getMarkers();
-						result.assign(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.getHeight = (System.IntPtr _this, out float result) => {
-					try {
-						var obj = GetContext(_this) as IDeserializedEnvironment;
-						var resultMarshaler = obj.getHeight();
-						result = resultMarshaler;
-					}
-					catch (System.Exception ex) {
-						result = default(float);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.getFloor = (System.IntPtr _this, out Antilatency.InterfaceContract.Bool result) => {
-					try {
-						var obj = GetContext(_this) as IDeserializedEnvironment;
-						var resultMarshaler = obj.getFloor();
-						result = resultMarshaler;
-					}
-					catch (System.Exception ex) {
-						result = default(Antilatency.InterfaceContract.Bool);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
+				vmt.getMarkers = getMarkers;
+				vmt.getHeight = getHeight;
+				vmt.getFloor = getFloor;
 				buffer.Add(vmt);
 			}
 			public IDeserializedEnvironmentRemap() { }
@@ -234,32 +253,40 @@ namespace Antilatency.Alt.Environment.Arbitrary2D {
 				AppendVmt(vmtBlocks);
 				NativeVmt = new NativeInterfaceVmt(vmtBlocks);
 			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.serializeDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode serialize(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate markers, float height, Antilatency.InterfaceContract.Bool floor, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) {
+				try {
+					var obj = GetContext(_this) as ILibrary;
+					var resultMarshaler = obj.serialize(markers.toArray<Antilatency.Math.float2>(), height, floor);
+					result.assign(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.deserializeDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode deserialize(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate environmentData, out System.IntPtr result) {
+				try {
+					var obj = GetContext(_this) as ILibrary;
+					var resultMarshaler = obj.deserialize(environmentData);
+					result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.Arbitrary2D.IDeserializedEnvironment>(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					result = default(System.IntPtr);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
 			protected static new void AppendVmt(System.Collections.Generic.List<object> buffer) {
 				Antilatency.Alt.Environment.Details.IEnvironmentConstructorRemap.AppendVmt(buffer);
 				var vmt = new VMT();
-				vmt.serialize = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate markers, float height, Antilatency.InterfaceContract.Bool floor, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) => {
-					try {
-						var obj = GetContext(_this) as ILibrary;
-						var resultMarshaler = obj.serialize(markers.toArray<Antilatency.Math.float2>(), height, floor);
-						result.assign(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.deserialize = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate environmentData, out System.IntPtr result) => {
-					try {
-						var obj = GetContext(_this) as ILibrary;
-						var resultMarshaler = obj.deserialize(environmentData);
-						result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.Arbitrary2D.IDeserializedEnvironment>(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						result = default(System.IntPtr);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
+				vmt.serialize = serialize;
+				vmt.deserialize = deserialize;
 				buffer.Add(vmt);
 			}
 			public ILibraryRemap() { }

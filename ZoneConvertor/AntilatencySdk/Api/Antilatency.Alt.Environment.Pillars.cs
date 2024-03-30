@@ -8,6 +8,13 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+//Unity IL2CPP fix
+#if ENABLE_IL2CPP && !__MonoCS__
+	#define __MonoCS__
+#endif
+#if __MonoCS__
+	using AOT;
+#endif
 #pragma warning disable IDE1006 // Do not warn about naming style violations
 #pragma warning disable IDE0017 // Do not suggest to simplify object initialization
 using System.Runtime.InteropServices; //GuidAttribute
@@ -17,21 +24,409 @@ namespace Antilatency.Alt.Environment.Pillars {
 	public partial struct PillarData {
 		public Antilatency.Math.float3 position;
 		public uint kind;
+		public float angle01;
+		public float fov01;
 	}
 }
 
 namespace Antilatency.Alt.Environment.Pillars {
-	[Guid("50d5c3b4-88a5-4dec-9d20-2d0d8f6505bc")]
-	[Antilatency.InterfaceContract.InterfaceId("50d5c3b4-88a5-4dec-9d20-2d0d8f6505bc")]
-	public interface IDeserializedEnvironment : Antilatency.InterfaceContract.IInterface {
-		Antilatency.Alt.Environment.Pillars.PillarData[] getPillars();
-		float[] getProportions();
+	[Guid("143f0dac-4ba6-44c3-ab3f-e096a48c24e5")]
+	[Antilatency.InterfaceContract.InterfaceId("143f0dac-4ba6-44c3-ab3f-e096a48c24e5")]
+	public interface IScheme : Antilatency.InterfaceContract.IInterface {
 		uint getNumMarkersPerPillar();
+		void setNumMarkersPerPillar(uint numMarkersPerPillar);
 		float getPillarLength();
+		void setPillarLength(float pillarLength);
+		float getDefaultFovDeg();
+		void setDefaultFovDeg(float defaultFovDeg);
+		float getPillarsVerticalOffset();
+		void setPillarsVerticalOffset(float pillarsVerticalOffset);
+		Antilatency.InterfaceContract.Bool getStrictMatch();
+		void setStrictMatch(Antilatency.InterfaceContract.Bool strictMatch);
+		void setNumPillarsKinds(uint numPillarsKinds);
+		uint getNumPillarsKinds();
+		float[] getProportions(uint pillarKind);
+		void setProportions(float[] proportions, uint pillarKind);
 	}
 }
 public static partial class QueryInterfaceExtensions {
-	public static readonly System.Guid Antilatency_Alt_Environment_Pillars_IDeserializedEnvironment_InterfaceID = new System.Guid("50d5c3b4-88a5-4dec-9d20-2d0d8f6505bc");
+	public static readonly System.Guid Antilatency_Alt_Environment_Pillars_IScheme_InterfaceID = new System.Guid("143f0dac-4ba6-44c3-ab3f-e096a48c24e5");
+	public static void QueryInterface(this Antilatency.InterfaceContract.IUnsafe _this, out Antilatency.Alt.Environment.Pillars.IScheme result) {
+		var guid = Antilatency_Alt_Environment_Pillars_IScheme_InterfaceID;
+		System.IntPtr ptr = System.IntPtr.Zero;
+		_this.QueryInterface(ref guid, out ptr);
+		if (ptr != System.IntPtr.Zero) {
+			result = new Antilatency.Alt.Environment.Pillars.Details.ISchemeWrapper(ptr);
+		}
+		else {
+			result = null;
+		}
+	}
+	public static void QueryInterfaceSafe(this Antilatency.InterfaceContract.IUnsafe _this, ref Antilatency.Alt.Environment.Pillars.IScheme result) {
+		Antilatency.Utils.SafeDispose(ref result);
+		var guid = Antilatency_Alt_Environment_Pillars_IScheme_InterfaceID;
+		System.IntPtr ptr = System.IntPtr.Zero;
+		_this.QueryInterface(ref guid, out ptr);
+		if (ptr != System.IntPtr.Zero) {
+			result = new Antilatency.Alt.Environment.Pillars.Details.ISchemeWrapper(ptr);
+		}
+	}
+}
+namespace Antilatency.Alt.Environment.Pillars {
+	namespace Details {
+		public class ISchemeWrapper : Antilatency.InterfaceContract.Details.IInterfaceWrapper, IScheme {
+			private ISchemeRemap.VMT _VMT = new ISchemeRemap.VMT();
+			protected new int GetTotalNativeMethodsCount() {
+			    return base.GetTotalNativeMethodsCount() + typeof(ISchemeRemap.VMT).GetFields().Length;
+			}
+			public ISchemeWrapper(System.IntPtr obj) : base(obj) {
+			    _VMT = LoadVMT<ISchemeRemap.VMT>(base.GetTotalNativeMethodsCount());
+			}
+			public uint getNumMarkersPerPillar() {
+				uint result;
+				uint resultMarshaler;
+				HandleExceptionCode(_VMT.getNumMarkersPerPillar(_object, out resultMarshaler));
+				result = resultMarshaler;
+				return result;
+			}
+			public void setNumMarkersPerPillar(uint numMarkersPerPillar) {
+				HandleExceptionCode(_VMT.setNumMarkersPerPillar(_object, numMarkersPerPillar));
+			}
+			public float getPillarLength() {
+				float result;
+				float resultMarshaler;
+				HandleExceptionCode(_VMT.getPillarLength(_object, out resultMarshaler));
+				result = resultMarshaler;
+				return result;
+			}
+			public void setPillarLength(float pillarLength) {
+				HandleExceptionCode(_VMT.setPillarLength(_object, pillarLength));
+			}
+			public float getDefaultFovDeg() {
+				float result;
+				float resultMarshaler;
+				HandleExceptionCode(_VMT.getDefaultFovDeg(_object, out resultMarshaler));
+				result = resultMarshaler;
+				return result;
+			}
+			public void setDefaultFovDeg(float defaultFovDeg) {
+				HandleExceptionCode(_VMT.setDefaultFovDeg(_object, defaultFovDeg));
+			}
+			public float getPillarsVerticalOffset() {
+				float result;
+				float resultMarshaler;
+				HandleExceptionCode(_VMT.getPillarsVerticalOffset(_object, out resultMarshaler));
+				result = resultMarshaler;
+				return result;
+			}
+			public void setPillarsVerticalOffset(float pillarsVerticalOffset) {
+				HandleExceptionCode(_VMT.setPillarsVerticalOffset(_object, pillarsVerticalOffset));
+			}
+			public Antilatency.InterfaceContract.Bool getStrictMatch() {
+				Antilatency.InterfaceContract.Bool result;
+				Antilatency.InterfaceContract.Bool resultMarshaler;
+				HandleExceptionCode(_VMT.getStrictMatch(_object, out resultMarshaler));
+				result = resultMarshaler;
+				return result;
+			}
+			public void setStrictMatch(Antilatency.InterfaceContract.Bool strictMatch) {
+				HandleExceptionCode(_VMT.setStrictMatch(_object, strictMatch));
+			}
+			public void setNumPillarsKinds(uint numPillarsKinds) {
+				HandleExceptionCode(_VMT.setNumPillarsKinds(_object, numPillarsKinds));
+			}
+			public uint getNumPillarsKinds() {
+				uint result;
+				uint resultMarshaler;
+				HandleExceptionCode(_VMT.getNumPillarsKinds(_object, out resultMarshaler));
+				result = resultMarshaler;
+				return result;
+			}
+			public float[] getProportions(uint pillarKind) {
+				float[] result;
+				var resultMarshaler = Antilatency.InterfaceContract.Details.ArrayOutMarshaler.create<float>();
+				HandleExceptionCode(_VMT.getProportions(_object, pillarKind, resultMarshaler));
+				result = resultMarshaler.value;
+				resultMarshaler.Dispose();
+				return result;
+			}
+			public void setProportions(float[] proportions, uint pillarKind) {
+				var proportionsMarshaler = Antilatency.InterfaceContract.Details.ArrayInMarshaler.create(proportions);
+				HandleExceptionCode(_VMT.setProportions(_object, proportionsMarshaler, pillarKind));
+				proportionsMarshaler.Dispose();
+			}
+		}
+		public class ISchemeRemap : Antilatency.InterfaceContract.Details.IInterfaceRemap {
+			public new struct VMT {
+				public delegate Antilatency.InterfaceContract.ExceptionCode getNumMarkersPerPillarDelegate(System.IntPtr _this, out uint result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode setNumMarkersPerPillarDelegate(System.IntPtr _this, uint numMarkersPerPillar);
+				public delegate Antilatency.InterfaceContract.ExceptionCode getPillarLengthDelegate(System.IntPtr _this, out float result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode setPillarLengthDelegate(System.IntPtr _this, float pillarLength);
+				public delegate Antilatency.InterfaceContract.ExceptionCode getDefaultFovDegDelegate(System.IntPtr _this, out float result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode setDefaultFovDegDelegate(System.IntPtr _this, float defaultFovDeg);
+				public delegate Antilatency.InterfaceContract.ExceptionCode getPillarsVerticalOffsetDelegate(System.IntPtr _this, out float result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode setPillarsVerticalOffsetDelegate(System.IntPtr _this, float pillarsVerticalOffset);
+				public delegate Antilatency.InterfaceContract.ExceptionCode getStrictMatchDelegate(System.IntPtr _this, out Antilatency.InterfaceContract.Bool result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode setStrictMatchDelegate(System.IntPtr _this, Antilatency.InterfaceContract.Bool strictMatch);
+				public delegate Antilatency.InterfaceContract.ExceptionCode setNumPillarsKindsDelegate(System.IntPtr _this, uint numPillarsKinds);
+				public delegate Antilatency.InterfaceContract.ExceptionCode getNumPillarsKindsDelegate(System.IntPtr _this, out uint result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode getProportionsDelegate(System.IntPtr _this, uint pillarKind, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode setProportionsDelegate(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate proportions, uint pillarKind);
+				#pragma warning disable 0649
+				public getNumMarkersPerPillarDelegate getNumMarkersPerPillar;
+				public setNumMarkersPerPillarDelegate setNumMarkersPerPillar;
+				public getPillarLengthDelegate getPillarLength;
+				public setPillarLengthDelegate setPillarLength;
+				public getDefaultFovDegDelegate getDefaultFovDeg;
+				public setDefaultFovDegDelegate setDefaultFovDeg;
+				public getPillarsVerticalOffsetDelegate getPillarsVerticalOffset;
+				public setPillarsVerticalOffsetDelegate setPillarsVerticalOffset;
+				public getStrictMatchDelegate getStrictMatch;
+				public setStrictMatchDelegate setStrictMatch;
+				public setNumPillarsKindsDelegate setNumPillarsKinds;
+				public getNumPillarsKindsDelegate getNumPillarsKinds;
+				public getProportionsDelegate getProportions;
+				public setProportionsDelegate setProportions;
+				#pragma warning restore 0649
+			}
+			public new static readonly NativeInterfaceVmt NativeVmt;
+			static ISchemeRemap() {
+				var vmtBlocks = new System.Collections.Generic.List<object>();
+				AppendVmt(vmtBlocks);
+				NativeVmt = new NativeInterfaceVmt(vmtBlocks);
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getNumMarkersPerPillarDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getNumMarkersPerPillar(System.IntPtr _this, out uint result) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					var resultMarshaler = obj.getNumMarkersPerPillar();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(uint);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.setNumMarkersPerPillarDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode setNumMarkersPerPillar(System.IntPtr _this, uint numMarkersPerPillar) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					obj.setNumMarkersPerPillar(numMarkersPerPillar);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getPillarLengthDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getPillarLength(System.IntPtr _this, out float result) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					var resultMarshaler = obj.getPillarLength();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(float);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.setPillarLengthDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode setPillarLength(System.IntPtr _this, float pillarLength) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					obj.setPillarLength(pillarLength);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getDefaultFovDegDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getDefaultFovDeg(System.IntPtr _this, out float result) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					var resultMarshaler = obj.getDefaultFovDeg();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(float);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.setDefaultFovDegDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode setDefaultFovDeg(System.IntPtr _this, float defaultFovDeg) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					obj.setDefaultFovDeg(defaultFovDeg);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getPillarsVerticalOffsetDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getPillarsVerticalOffset(System.IntPtr _this, out float result) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					var resultMarshaler = obj.getPillarsVerticalOffset();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(float);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.setPillarsVerticalOffsetDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode setPillarsVerticalOffset(System.IntPtr _this, float pillarsVerticalOffset) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					obj.setPillarsVerticalOffset(pillarsVerticalOffset);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getStrictMatchDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getStrictMatch(System.IntPtr _this, out Antilatency.InterfaceContract.Bool result) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					var resultMarshaler = obj.getStrictMatch();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(Antilatency.InterfaceContract.Bool);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.setStrictMatchDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode setStrictMatch(System.IntPtr _this, Antilatency.InterfaceContract.Bool strictMatch) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					obj.setStrictMatch(strictMatch);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.setNumPillarsKindsDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode setNumPillarsKinds(System.IntPtr _this, uint numPillarsKinds) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					obj.setNumPillarsKinds(numPillarsKinds);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getNumPillarsKindsDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getNumPillarsKinds(System.IntPtr _this, out uint result) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					var resultMarshaler = obj.getNumPillarsKinds();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(uint);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getProportionsDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getProportions(System.IntPtr _this, uint pillarKind, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					var resultMarshaler = obj.getProportions(pillarKind);
+					result.assign(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.setProportionsDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode setProportions(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate proportions, uint pillarKind) {
+				try {
+					var obj = GetContext(_this) as IScheme;
+					obj.setProportions(proportions.toArray<float>(), pillarKind);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			protected static new void AppendVmt(System.Collections.Generic.List<object> buffer) {
+				Antilatency.InterfaceContract.Details.IInterfaceRemap.AppendVmt(buffer);
+				var vmt = new VMT();
+				vmt.getNumMarkersPerPillar = getNumMarkersPerPillar;
+				vmt.setNumMarkersPerPillar = setNumMarkersPerPillar;
+				vmt.getPillarLength = getPillarLength;
+				vmt.setPillarLength = setPillarLength;
+				vmt.getDefaultFovDeg = getDefaultFovDeg;
+				vmt.setDefaultFovDeg = setDefaultFovDeg;
+				vmt.getPillarsVerticalOffset = getPillarsVerticalOffset;
+				vmt.setPillarsVerticalOffset = setPillarsVerticalOffset;
+				vmt.getStrictMatch = getStrictMatch;
+				vmt.setStrictMatch = setStrictMatch;
+				vmt.setNumPillarsKinds = setNumPillarsKinds;
+				vmt.getNumPillarsKinds = getNumPillarsKinds;
+				vmt.getProportions = getProportions;
+				vmt.setProportions = setProportions;
+				buffer.Add(vmt);
+			}
+			public ISchemeRemap() { }
+			public ISchemeRemap(System.IntPtr context, ushort lifetimeId) {
+				AllocateNativeInterface(NativeVmt.Handle, context, lifetimeId);
+			}
+		}
+	}
+}
+
+namespace Antilatency.Alt.Environment.Pillars {
+	[Guid("28eb9cd7-28dc-4318-aa95-32886161e14b")]
+	[Antilatency.InterfaceContract.InterfaceId("28eb9cd7-28dc-4318-aa95-32886161e14b")]
+	public interface IDeserializedEnvironment : Antilatency.InterfaceContract.IInterface {
+		Antilatency.Alt.Environment.Pillars.PillarData[] getPillars();
+		Antilatency.Alt.Environment.Pillars.IScheme getScheme();
+	}
+}
+public static partial class QueryInterfaceExtensions {
+	public static readonly System.Guid Antilatency_Alt_Environment_Pillars_IDeserializedEnvironment_InterfaceID = new System.Guid("28eb9cd7-28dc-4318-aa95-32886161e14b");
 	public static void QueryInterface(this Antilatency.InterfaceContract.IUnsafe _this, out Antilatency.Alt.Environment.Pillars.IDeserializedEnvironment result) {
 		var guid = Antilatency_Alt_Environment_Pillars_IDeserializedEnvironment_InterfaceID;
 		System.IntPtr ptr = System.IntPtr.Zero;
@@ -71,40 +466,21 @@ namespace Antilatency.Alt.Environment.Pillars {
 				resultMarshaler.Dispose();
 				return result;
 			}
-			public float[] getProportions() {
-				float[] result;
-				var resultMarshaler = Antilatency.InterfaceContract.Details.ArrayOutMarshaler.create<float>();
-				HandleExceptionCode(_VMT.getProportions(_object, resultMarshaler));
-				result = resultMarshaler.value;
-				resultMarshaler.Dispose();
-				return result;
-			}
-			public uint getNumMarkersPerPillar() {
-				uint result;
-				uint resultMarshaler;
-				HandleExceptionCode(_VMT.getNumMarkersPerPillar(_object, out resultMarshaler));
-				result = resultMarshaler;
-				return result;
-			}
-			public float getPillarLength() {
-				float result;
-				float resultMarshaler;
-				HandleExceptionCode(_VMT.getPillarLength(_object, out resultMarshaler));
-				result = resultMarshaler;
+			public Antilatency.Alt.Environment.Pillars.IScheme getScheme() {
+				Antilatency.Alt.Environment.Pillars.IScheme result;
+				System.IntPtr resultMarshaler;
+				HandleExceptionCode(_VMT.getScheme(_object, out resultMarshaler));
+				result = (resultMarshaler==System.IntPtr.Zero) ? null : new Antilatency.Alt.Environment.Pillars.Details.ISchemeWrapper(resultMarshaler);
 				return result;
 			}
 		}
 		public class IDeserializedEnvironmentRemap : Antilatency.InterfaceContract.Details.IInterfaceRemap {
 			public new struct VMT {
 				public delegate Antilatency.InterfaceContract.ExceptionCode getPillarsDelegate(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result);
-				public delegate Antilatency.InterfaceContract.ExceptionCode getProportionsDelegate(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result);
-				public delegate Antilatency.InterfaceContract.ExceptionCode getNumMarkersPerPillarDelegate(System.IntPtr _this, out uint result);
-				public delegate Antilatency.InterfaceContract.ExceptionCode getPillarLengthDelegate(System.IntPtr _this, out float result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode getSchemeDelegate(System.IntPtr _this, out System.IntPtr result);
 				#pragma warning disable 0649
 				public getPillarsDelegate getPillars;
-				public getProportionsDelegate getProportions;
-				public getNumMarkersPerPillarDelegate getNumMarkersPerPillar;
-				public getPillarLengthDelegate getPillarLength;
+				public getSchemeDelegate getScheme;
 				#pragma warning restore 0649
 			}
 			public new static readonly NativeInterfaceVmt NativeVmt;
@@ -113,55 +489,40 @@ namespace Antilatency.Alt.Environment.Pillars {
 				AppendVmt(vmtBlocks);
 				NativeVmt = new NativeInterfaceVmt(vmtBlocks);
 			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getPillarsDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getPillars(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) {
+				try {
+					var obj = GetContext(_this) as IDeserializedEnvironment;
+					var resultMarshaler = obj.getPillars();
+					result.assign(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getSchemeDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getScheme(System.IntPtr _this, out System.IntPtr result) {
+				try {
+					var obj = GetContext(_this) as IDeserializedEnvironment;
+					var resultMarshaler = obj.getScheme();
+					result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.Pillars.IScheme>(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					result = default(System.IntPtr);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
 			protected static new void AppendVmt(System.Collections.Generic.List<object> buffer) {
 				Antilatency.InterfaceContract.Details.IInterfaceRemap.AppendVmt(buffer);
 				var vmt = new VMT();
-				vmt.getPillars = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) => {
-					try {
-						var obj = GetContext(_this) as IDeserializedEnvironment;
-						var resultMarshaler = obj.getPillars();
-						result.assign(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.getProportions = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) => {
-					try {
-						var obj = GetContext(_this) as IDeserializedEnvironment;
-						var resultMarshaler = obj.getProportions();
-						result.assign(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.getNumMarkersPerPillar = (System.IntPtr _this, out uint result) => {
-					try {
-						var obj = GetContext(_this) as IDeserializedEnvironment;
-						var resultMarshaler = obj.getNumMarkersPerPillar();
-						result = resultMarshaler;
-					}
-					catch (System.Exception ex) {
-						result = default(uint);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.getPillarLength = (System.IntPtr _this, out float result) => {
-					try {
-						var obj = GetContext(_this) as IDeserializedEnvironment;
-						var resultMarshaler = obj.getPillarLength();
-						result = resultMarshaler;
-					}
-					catch (System.Exception ex) {
-						result = default(float);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
+				vmt.getPillars = getPillars;
+				vmt.getScheme = getScheme;
 				buffer.Add(vmt);
 			}
 			public IDeserializedEnvironmentRemap() { }
@@ -173,15 +534,15 @@ namespace Antilatency.Alt.Environment.Pillars {
 }
 
 namespace Antilatency.Alt.Environment.Pillars {
-	[Guid("fb691fa6-ccd5-4b82-aad9-13d70a8b8322")]
-	[Antilatency.InterfaceContract.InterfaceId("fb691fa6-ccd5-4b82-aad9-13d70a8b8322")]
+	[Guid("8c5671c0-07d0-4ca0-8666-39eb75d7f073")]
+	[Antilatency.InterfaceContract.InterfaceId("8c5671c0-07d0-4ca0-8666-39eb75d7f073")]
 	public interface ILibrary : Antilatency.Alt.Environment.IEnvironmentConstructor {
-		string serialize(Antilatency.Alt.Environment.Pillars.PillarData[] pillars, float[] proportions, uint numMarkersPerPillar, float pillarLength);
+		string serialize(Antilatency.Alt.Environment.Pillars.PillarData[] pillars, Antilatency.Alt.Environment.Pillars.IScheme scheme);
 		Antilatency.Alt.Environment.Pillars.IDeserializedEnvironment deserialize(string environmentData);
 	}
 }
 public static partial class QueryInterfaceExtensions {
-	public static readonly System.Guid Antilatency_Alt_Environment_Pillars_ILibrary_InterfaceID = new System.Guid("fb691fa6-ccd5-4b82-aad9-13d70a8b8322");
+	public static readonly System.Guid Antilatency_Alt_Environment_Pillars_ILibrary_InterfaceID = new System.Guid("8c5671c0-07d0-4ca0-8666-39eb75d7f073");
 	public static void QueryInterface(this Antilatency.InterfaceContract.IUnsafe _this, out Antilatency.Alt.Environment.Pillars.ILibrary result) {
 		var guid = Antilatency_Alt_Environment_Pillars_ILibrary_InterfaceID;
 		System.IntPtr ptr = System.IntPtr.Zero;
@@ -230,14 +591,13 @@ namespace Antilatency.Alt.Environment.Pillars {
 			public ILibraryWrapper(System.IntPtr obj) : base(obj) {
 			    _VMT = LoadVMT<ILibraryRemap.VMT>(base.GetTotalNativeMethodsCount());
 			}
-			public string serialize(Antilatency.Alt.Environment.Pillars.PillarData[] pillars, float[] proportions, uint numMarkersPerPillar, float pillarLength) {
+			public string serialize(Antilatency.Alt.Environment.Pillars.PillarData[] pillars, Antilatency.Alt.Environment.Pillars.IScheme scheme) {
 				string result;
 				var resultMarshaler = Antilatency.InterfaceContract.Details.ArrayOutMarshaler.create();
 				var pillarsMarshaler = Antilatency.InterfaceContract.Details.ArrayInMarshaler.create(pillars);
-				var proportionsMarshaler = Antilatency.InterfaceContract.Details.ArrayInMarshaler.create(proportions);
-				HandleExceptionCode(_VMT.serialize(_object, pillarsMarshaler, proportionsMarshaler, numMarkersPerPillar, pillarLength, resultMarshaler));
+				var schemeMarshaler = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.Pillars.IScheme>(scheme);
+				HandleExceptionCode(_VMT.serialize(_object, pillarsMarshaler, schemeMarshaler, resultMarshaler));
 				pillarsMarshaler.Dispose();
-				proportionsMarshaler.Dispose();
 				result = resultMarshaler.value;
 				resultMarshaler.Dispose();
 				return result;
@@ -254,7 +614,7 @@ namespace Antilatency.Alt.Environment.Pillars {
 		}
 		public class ILibraryRemap : Antilatency.Alt.Environment.Details.IEnvironmentConstructorRemap {
 			public new struct VMT {
-				public delegate Antilatency.InterfaceContract.ExceptionCode serializeDelegate(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate pillars, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate proportions, uint numMarkersPerPillar, float pillarLength, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result);
+				public delegate Antilatency.InterfaceContract.ExceptionCode serializeDelegate(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate pillars, System.IntPtr scheme, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result);
 				public delegate Antilatency.InterfaceContract.ExceptionCode deserializeDelegate(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate environmentData, out System.IntPtr result);
 				#pragma warning disable 0649
 				public serializeDelegate serialize;
@@ -267,32 +627,41 @@ namespace Antilatency.Alt.Environment.Pillars {
 				AppendVmt(vmtBlocks);
 				NativeVmt = new NativeInterfaceVmt(vmtBlocks);
 			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.serializeDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode serialize(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate pillars, System.IntPtr scheme, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) {
+				try {
+					var obj = GetContext(_this) as ILibrary;
+					var schemeMarshaler = scheme == System.IntPtr.Zero ? null : new Antilatency.Alt.Environment.Pillars.Details.ISchemeWrapper(scheme);
+					var resultMarshaler = obj.serialize(pillars.toArray<Antilatency.Alt.Environment.Pillars.PillarData>(), schemeMarshaler);
+					result.assign(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.deserializeDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode deserialize(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate environmentData, out System.IntPtr result) {
+				try {
+					var obj = GetContext(_this) as ILibrary;
+					var resultMarshaler = obj.deserialize(environmentData);
+					result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.Pillars.IDeserializedEnvironment>(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					result = default(System.IntPtr);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
 			protected static new void AppendVmt(System.Collections.Generic.List<object> buffer) {
 				Antilatency.Alt.Environment.Details.IEnvironmentConstructorRemap.AppendVmt(buffer);
 				var vmt = new VMT();
-				vmt.serialize = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate pillars, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate proportions, uint numMarkersPerPillar, float pillarLength, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) => {
-					try {
-						var obj = GetContext(_this) as ILibrary;
-						var resultMarshaler = obj.serialize(pillars.toArray<Antilatency.Alt.Environment.Pillars.PillarData>(), proportions.toArray<float>(), numMarkersPerPillar, pillarLength);
-						result.assign(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.deserialize = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate environmentData, out System.IntPtr result) => {
-					try {
-						var obj = GetContext(_this) as ILibrary;
-						var resultMarshaler = obj.deserialize(environmentData);
-						result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.Pillars.IDeserializedEnvironment>(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						result = default(System.IntPtr);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
+				vmt.serialize = serialize;
+				vmt.deserialize = deserialize;
 				buffer.Add(vmt);
 			}
 			public ILibraryRemap() { }

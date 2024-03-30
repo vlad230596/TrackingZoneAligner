@@ -8,6 +8,13 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+//Unity IL2CPP fix
+#if ENABLE_IL2CPP && !__MonoCS__
+	#define __MonoCS__
+#endif
+#if __MonoCS__
+	using AOT;
+#endif
 #pragma warning disable IDE1006 // Do not warn about naming style violations
 #pragma warning disable IDE0017 // Do not suggest to simplify object initialization
 using System.Runtime.InteropServices; //GuidAttribute
@@ -156,73 +163,93 @@ namespace Antilatency.Alt.Environment {
 				AppendVmt(vmtBlocks);
 				NativeVmt = new NativeInterfaceVmt(vmtBlocks);
 			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.isMutableDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode isMutable(System.IntPtr _this, out Antilatency.InterfaceContract.Bool result) {
+				try {
+					var obj = GetContext(_this) as IEnvironment;
+					var resultMarshaler = obj.isMutable();
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(Antilatency.InterfaceContract.Bool);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.getMarkersDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode getMarkers(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) {
+				try {
+					var obj = GetContext(_this) as IEnvironment;
+					var resultMarshaler = obj.getMarkers();
+					result.assign(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.filterRayDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode filterRay(System.IntPtr _this, Antilatency.Math.float3 up, Antilatency.Math.float3 ray, out Antilatency.InterfaceContract.Bool result) {
+				try {
+					var obj = GetContext(_this) as IEnvironment;
+					var resultMarshaler = obj.filterRay(up, ray);
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(Antilatency.InterfaceContract.Bool);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.matchDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode match(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate raysUpSpace, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate markersIndices, out Antilatency.Math.floatP3Q poseOfUpSpace, out Antilatency.InterfaceContract.Bool result) {
+				try {
+					var obj = GetContext(_this) as IEnvironment;
+					Antilatency.Alt.Environment.MarkerIndex[] markersIndicesMarshaler;
+					Antilatency.Math.floatP3Q poseOfUpSpaceMarshaler;
+					poseOfUpSpace = default(Antilatency.Math.floatP3Q);
+					var resultMarshaler = obj.match(raysUpSpace.toArray<Antilatency.Math.float3>(), out markersIndicesMarshaler, out poseOfUpSpaceMarshaler);
+					markersIndices.assign(markersIndicesMarshaler);
+					poseOfUpSpace = poseOfUpSpaceMarshaler;
+					result = resultMarshaler;
+				}
+				catch (System.Exception ex) {
+					result = default(Antilatency.InterfaceContract.Bool);
+					poseOfUpSpace = default(Antilatency.Math.floatP3Q);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.matchByPositionDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode matchByPosition(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate rays, Antilatency.Math.float3 origin, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) {
+				try {
+					var obj = GetContext(_this) as IEnvironment;
+					var resultMarshaler = obj.matchByPosition(rays.toArray<Antilatency.Math.float3>(), origin);
+					result.assign(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
 			protected static new void AppendVmt(System.Collections.Generic.List<object> buffer) {
 				Antilatency.InterfaceContract.Details.IInterfaceRemap.AppendVmt(buffer);
 				var vmt = new VMT();
-				vmt.isMutable = (System.IntPtr _this, out Antilatency.InterfaceContract.Bool result) => {
-					try {
-						var obj = GetContext(_this) as IEnvironment;
-						var resultMarshaler = obj.isMutable();
-						result = resultMarshaler;
-					}
-					catch (System.Exception ex) {
-						result = default(Antilatency.InterfaceContract.Bool);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.getMarkers = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) => {
-					try {
-						var obj = GetContext(_this) as IEnvironment;
-						var resultMarshaler = obj.getMarkers();
-						result.assign(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.filterRay = (System.IntPtr _this, Antilatency.Math.float3 up, Antilatency.Math.float3 ray, out Antilatency.InterfaceContract.Bool result) => {
-					try {
-						var obj = GetContext(_this) as IEnvironment;
-						var resultMarshaler = obj.filterRay(up, ray);
-						result = resultMarshaler;
-					}
-					catch (System.Exception ex) {
-						result = default(Antilatency.InterfaceContract.Bool);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.match = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate raysUpSpace, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate markersIndices, out Antilatency.Math.floatP3Q poseOfUpSpace, out Antilatency.InterfaceContract.Bool result) => {
-					try {
-						var obj = GetContext(_this) as IEnvironment;
-						Antilatency.Alt.Environment.MarkerIndex[] markersIndicesMarshaler;
-						Antilatency.Math.floatP3Q poseOfUpSpaceMarshaler;
-						poseOfUpSpace = default(Antilatency.Math.floatP3Q);
-						var resultMarshaler = obj.match(raysUpSpace.toArray<Antilatency.Math.float3>(), out markersIndicesMarshaler, out poseOfUpSpaceMarshaler);
-						markersIndices.assign(markersIndicesMarshaler);
-						poseOfUpSpace = poseOfUpSpaceMarshaler;
-						result = resultMarshaler;
-					}
-					catch (System.Exception ex) {
-						result = default(Antilatency.InterfaceContract.Bool);
-						poseOfUpSpace = default(Antilatency.Math.floatP3Q);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.matchByPosition = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate rays, Antilatency.Math.float3 origin, Antilatency.InterfaceContract.Details.ArrayOutMarshaler.Intermediate result) => {
-					try {
-						var obj = GetContext(_this) as IEnvironment;
-						var resultMarshaler = obj.matchByPosition(rays.toArray<Antilatency.Math.float3>(), origin);
-						result.assign(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
+				vmt.isMutable = isMutable;
+				vmt.getMarkers = getMarkers;
+				vmt.filterRay = filterRay;
+				vmt.match = match;
+				vmt.matchByPosition = matchByPosition;
 				buffer.Add(vmt);
 			}
 			public IEnvironmentRemap() { }
@@ -296,21 +323,25 @@ namespace Antilatency.Alt.Environment {
 				AppendVmt(vmtBlocks);
 				NativeVmt = new NativeInterfaceVmt(vmtBlocks);
 			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.createEnvironmentDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode createEnvironment(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate data, out System.IntPtr result) {
+				try {
+					var obj = GetContext(_this) as IEnvironmentConstructor;
+					var resultMarshaler = obj.createEnvironment(data);
+					result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.IEnvironment>(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					result = default(System.IntPtr);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
 			protected static new void AppendVmt(System.Collections.Generic.List<object> buffer) {
 				Antilatency.InterfaceContract.Details.IInterfaceRemap.AppendVmt(buffer);
 				var vmt = new VMT();
-				vmt.createEnvironment = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate data, out System.IntPtr result) => {
-					try {
-						var obj = GetContext(_this) as IEnvironmentConstructor;
-						var resultMarshaler = obj.createEnvironment(data);
-						result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.IEnvironment>(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						result = default(System.IntPtr);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
+				vmt.createEnvironment = createEnvironment;
 				buffer.Add(vmt);
 			}
 			public IEnvironmentConstructorRemap() { }

@@ -8,6 +8,13 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+//Unity IL2CPP fix
+#if ENABLE_IL2CPP && !__MonoCS__
+	#define __MonoCS__
+#endif
+#if __MonoCS__
+	using AOT;
+#endif
 #pragma warning disable IDE1006 // Do not warn about naming style violations
 #pragma warning disable IDE0017 // Do not suggest to simplify object initialization
 using System.Runtime.InteropServices; //GuidAttribute
@@ -108,42 +115,54 @@ namespace Antilatency.Alt.Environment.Selector {
 				AppendVmt(vmtBlocks);
 				NativeVmt = new NativeInterfaceVmt(vmtBlocks);
 			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.registerEnvironmentProviderDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode registerEnvironmentProvider(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate name, System.IntPtr provider) {
+				try {
+					var obj = GetContext(_this) as ILibrary;
+					var providerMarshaler = provider == System.IntPtr.Zero ? null : new Antilatency.Alt.Environment.Details.IEnvironmentConstructorWrapper(provider);
+					obj.registerEnvironmentProvider(name, providerMarshaler);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.unregisterEnvironmentProviderDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode unregisterEnvironmentProvider(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate name) {
+				try {
+					var obj = GetContext(_this) as ILibrary;
+					obj.unregisterEnvironmentProvider(name);
+				}
+				catch (System.Exception ex) {
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
+			#if __MonoCS__
+				[MonoPInvokeCallback(typeof(VMT.createEnvironmentDelegate))]
+			#endif
+			private static Antilatency.InterfaceContract.ExceptionCode createEnvironment(System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate data, out System.IntPtr result) {
+				try {
+					var obj = GetContext(_this) as ILibrary;
+					var resultMarshaler = obj.createEnvironment(data);
+					result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.IEnvironment>(resultMarshaler);
+				}
+				catch (System.Exception ex) {
+					result = default(System.IntPtr);
+					return handleRemapException(ex, _this);
+				}
+				return Antilatency.InterfaceContract.ExceptionCode.Ok;
+			}
 			protected static new void AppendVmt(System.Collections.Generic.List<object> buffer) {
 				Antilatency.InterfaceContract.Details.IInterfaceRemap.AppendVmt(buffer);
 				var vmt = new VMT();
-				vmt.registerEnvironmentProvider = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate name, System.IntPtr provider) => {
-					try {
-						var obj = GetContext(_this) as ILibrary;
-						var providerMarshaler = provider == System.IntPtr.Zero ? null : new Antilatency.Alt.Environment.Details.IEnvironmentConstructorWrapper(provider);
-						obj.registerEnvironmentProvider(name, providerMarshaler);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.unregisterEnvironmentProvider = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate name) => {
-					try {
-						var obj = GetContext(_this) as ILibrary;
-						obj.unregisterEnvironmentProvider(name);
-					}
-					catch (System.Exception ex) {
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
-				vmt.createEnvironment = (System.IntPtr _this, Antilatency.InterfaceContract.Details.ArrayInMarshaler.Intermediate data, out System.IntPtr result) => {
-					try {
-						var obj = GetContext(_this) as ILibrary;
-						var resultMarshaler = obj.createEnvironment(data);
-						result = Antilatency.InterfaceContract.Details.InterfaceMarshaler.ManagedToNative<Antilatency.Alt.Environment.IEnvironment>(resultMarshaler);
-					}
-					catch (System.Exception ex) {
-						result = default(System.IntPtr);
-						return handleRemapException(ex, _this);
-					}
-					return Antilatency.InterfaceContract.ExceptionCode.Ok;
-				};
+				vmt.registerEnvironmentProvider = registerEnvironmentProvider;
+				vmt.unregisterEnvironmentProvider = unregisterEnvironmentProvider;
+				vmt.createEnvironment = createEnvironment;
 				buffer.Add(vmt);
 			}
 			public ILibraryRemap() { }

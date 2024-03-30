@@ -8,6 +8,13 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+//Unity IL2CPP fix
+#if ENABLE_IL2CPP && !__MonoCS__
+	#define __MonoCS__
+#endif
+#if __MonoCS__
+	using AOT;
+#endif
 #pragma warning disable IDE1006 // Do not warn about naming style violations
 #pragma warning disable IDE0017 // Do not suggest to simplify object initialization
 using System.Runtime.InteropServices; //GuidAttribute
